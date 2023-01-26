@@ -1,0 +1,4 @@
+.env
+yarn.lock
+dev.sqlite3
+node_modules/
