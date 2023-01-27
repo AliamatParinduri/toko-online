@@ -9,6 +9,7 @@ exports.up = function(knex) {
     table.string("title", 255).notNullable()
     table.string("description", 255).notNullable()
     table.string("image", 255).notNullable()
+    table.integer("qty").notNullable()
     table.decimal("price").notNullable()
   })
 };

@@ -12,6 +12,7 @@ exports.seed = async function(knex) {
       id: i,
       title: `rowValue${i}`,
       description: `desc${i}`,
+      qty: `${i}00`,
       price: `${i}000`,
       image: "https://placeimg.com/480/480/tech",
     },]

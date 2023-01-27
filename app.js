@@ -4,8 +4,9 @@ const cors = require('cors')
 const helmet = require('helmet')
 const morgan = require('morgan')
 
-const products = require('./routes/product_route')
-const users = require('./routes/user_route')
+const auth = require('./src/routes/auth_route')
+const products = require('./src/routes/product_route')
+const users = require('./src/routes/user_route')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -23,6 +24,7 @@ app.get("/", (req, res, next) => {
   })
 })
 
+app.use('/api/v1/auth', auth)
 app.use('/api/v1/products', products)
 app.use('/api/v1/users', users)
 
