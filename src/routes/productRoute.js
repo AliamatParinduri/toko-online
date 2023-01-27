@@ -1,6 +1,6 @@
 const express = require("express")
 
-const pc = require('../controllers/product_controller')
+const pc = require('../controllers/productController')
 const { auth } = require("../middlewares/auth")
 
 const router = express.Router()

@@ -1,23 +1,20 @@
 const knex = require("../../knex")
+const { responseError } = require("../helper/responseMessages")
 
 exports.getProducts = async (req, res, next) => {
   try {
     const products = await knex("products")
 
     if (products.length < 1) {
-      return res.status(404).send({
-        message: "data product tidak ditemukan",
-      })
+      return responseError(next, 404, "data product tidak ditemukan")
     }
 
     res.status(200).send({
       message: "success mendapatkan data product",
       data: products,
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -25,28 +22,18 @@ exports.getProductById = async (req, res, next) => {
   try {
     const { id } = req.params
 
-    if (!id) {
-      res.status(400).send({
-        message: "parameter tidak ditemukan",
-      })
-    }
-
     const product = await knex("products").where("id", id).first()
 
     if (!product) {
-      return res.status(404).send({
-        message: "data product tidak ditemukan",
-      })
+      return responseError(next, 404, "data product tidak ditemukan")
     }
 
     res.status(200).send({
       message: "success mendapatkan data product",
       data: product,
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -55,32 +42,35 @@ exports.createProduct = async (req, res, next) => {
     const data = req.body
 
     if (data.price == 0 || data.price < 0) {
-      return res.status(400).send({
-        message: "price tidak valid",
-      })
+      return responseError(next, 400, "price tidak valid")
+    }
+
+    const checkProduct = await knex("products").where("name", data.name).first()
+
+    if (checkProduct) {
+      return responseError(next, 400, "nama product sudah digunakan")
     }
 
     await knex("products").insert({
-      title: data.title,
+      name: data.name,
       description: data.description,
       price: data.price,
+      qty: data.qty,
       image: data.image,
     })
 
     res.status(201).send({
       message: "Success tambah data product",
       data: {
-        name: data.title,
+        name: data.name,
         description: data.description,
         price: data.price,
         qty: data.qty,
         image: data.image,
       },
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -89,14 +79,17 @@ exports.updateProduct = async (req, res, next) => {
     const data = req.body
     const { id } = req.params
 
-    if (!id) {
-      res.status(400).send({
-        message: "parameter tidak ditemukan",
-      })
+    const checkProduct = await knex("products")
+      .where("name", data.name)
+      .whereNot("id", id)
+      .first()
+
+    if (checkProduct) {
+      return responseError(next, 400, "nama product sudah digunakan")
     }
 
     await knex("products").where("id", id).update({
-      title: data.title,
+      name: data.name,
       description: data.description,
       price: data.price,
       image: data.image,
@@ -105,17 +98,15 @@ exports.updateProduct = async (req, res, next) => {
     res.status(200).send({
       message: "Success update data product",
       data: {
-        name: data.title,
+        name: data.name,
         description: data.description,
         price: data.price,
         qty: data.qty,
         image: data.image,
       },
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -123,20 +114,16 @@ exports.deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params
 
-    if (!id) {
-      res.status(400).send({
-        message: "parameter tidak ditemukan",
-      })
-    }
+    const product = await knex("products").where("id", id).del()
 
-    await knex("products").where("id", id).del()
+    if (product == 0) {
+      return responseError(next, 400, "product tidak ditemukan")
+    }
 
     res.status(200).send({
       message: "Success delete data product",
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }

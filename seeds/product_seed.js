@@ -10,7 +10,7 @@ exports.seed = async function(knex) {
   for (let i = 1; i <= 5; i++) {
     data = [...data, {
       id: i,
-      title: `rowValue${i}`,
+      name: `rowValue${i}`,
       description: `desc${i}`,
       qty: `${i}00`,
       price: `${i}000`,

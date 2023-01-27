@@ -5,26 +5,22 @@ exports.register = async (req, res, next) => {
   try {
     const data = req.body
 
+    const checkEmail = await knex("users").where("email", data.email).first()
+    if (checkEmail) {
+      return responseError(next, 400, "email sudah digunakan")
+    }
+
+    const checkPhone = await knex("users").where("phone", data.phone).first()
+    if (checkPhone) {
+      return responseError(next, 400, "no hp sudah digunakan")
+    }
+
     await knex("users").insert({
       name: data.name,
       email: data.email,
       password: data.password,
       phone: data.phone,
     })
-
-    const checkEmail = await knex("users").where("email", data.email).first()
-    if (checkEmail) {
-      return res.status(400).send({
-        message: "email sudah ada yang menggunakan",
-      })
-    }
-
-    const checkPhone = await knex("users").where("phone", data.phone).first()
-    if (checkPhone) {
-      return res.status(400).send({
-        message: "phone sudah ada yang menggunakan",
-      })
-    }
 
     res.status(201).send({
       message: "Success tambah data product",
@@ -34,10 +30,8 @@ exports.register = async (req, res, next) => {
         phone: data.phone,
       },
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -46,12 +40,13 @@ exports.login = async (req, res, next) => {
     const data = req.body
 
     const user = await knex("users").where("email", data.email).first()
+    if (!user) {
+      return responseError(next, 400, "Email atau Password salah")
+    }
 
     const passwordCheck = await passwordCompare(data.password, user.password)
     if (!passwordCheck) {
-      return res.status(400).send({
-        message: "Email atau Password salah",
-      })
+      return responseError(next, 400, "Email atau Password salah")
     }
 
     const token = await generateToken({
@@ -64,9 +59,7 @@ exports.login = async (req, res, next) => {
       data: user,
       token,
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }

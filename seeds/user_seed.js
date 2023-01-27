@@ -1,4 +1,4 @@
-const { passwordHash } = require("../utils/authentication")
+const { passwordHash } = require("../src/utils/authentication")
 
 /**
  * @param { import("knex").Knex } knex

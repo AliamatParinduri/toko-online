@@ -1,4 +1,5 @@
 const knex = require("../../knex")
+const { responseError } = require("../helper/responseMessages")
 const { passwordHash } = require("../utils/authentication")
 
 exports.getUsers = async (req, res, next) => {
@@ -6,19 +7,15 @@ exports.getUsers = async (req, res, next) => {
     const users = await knex("users")
 
     if (users.length < 1) {
-      return res.status(404).send({
-        message: "data user tidak ditemukan",
-      })
+      return responseError(next, 404, "data user tidak ditemukan")
     }
 
     res.status(200).send({
       message: "success mendapatkan data user",
       data: users,
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -26,34 +23,34 @@ exports.getUserById = async (req, res, next) => {
   try {
     const { id } = req.params
 
-    if (!id) {
-      res.status(400).send({
-        message: "parameter tidak ditemukan",
-      })
-    }
-
     const user = await knex("users").where("id", id).first()
 
     if (!user) {
-      return res.status(404).send({
-        message: "data user tidak ditemukan",
-      })
+      return responseError(next, 404, "data user tidak ditemukan")
     }
 
     res.status(200).send({
       message: "success mendapatkan data user",
       data: user,
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
 exports.createUser = async (req, res, next) => {
   try {
     const data = req.body
+
+    const checkEmail = await knex("users").where("email", data.email).first()
+    if (checkEmail) {
+      return responseError(next, 400, "email sudah digunakan")
+    }
+
+    const checkPhone = await knex("users").where("phone", data.phone).first()
+    if (checkPhone) {
+      return responseError(next, 400, "no hp sudah digunakan")
+    }
 
     await knex("users").insert({
       name: data.name,
@@ -62,32 +59,16 @@ exports.createUser = async (req, res, next) => {
       phone: data.phone,
     })
 
-    const checkEmail = await knex("users").where("email", data.email).first()
-    if (checkEmail) {
-      return res.status(400).send({
-        message: "email sudah ada yang menggunakan",
-      })
-    }
-
-    const checkPhone = await knex("users").where("phone", data.phone).first()
-    if (checkPhone) {
-      return res.status(400).send({
-        message: "phone sudah ada yang menggunakan",
-      })
-    }
-
     res.status(201).send({
-      message: "Success tambah data product",
+      message: "Success tambah data user",
       data: {
         name: data.name,
         email: data.email,
         phone: data.phone,
       },
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -96,30 +77,22 @@ exports.updateUser = async (req, res, next) => {
     const data = req.body
     const { id } = req.params
 
-    if (!id) {
-      res.status(400).send({
-        message: "parameter tidak ditemukan",
-      })
-    }
-
     const checkEmail = await knex("users")
       .where("email", data.email)
       .whereNot("id", id)
       .first()
+
     if (checkEmail) {
-      return res.status(400).send({
-        message: "email sudah ada yang menggunakan",
-      })
+      return responseError(next, 400, "email sudah digunakan")
     }
 
     const checkPhone = await knex("users")
       .where("phone", data.phone)
       .whereNot("id", id)
       .first()
+
     if (checkPhone) {
-      return res.status(400).send({
-        message: "phone sudah ada yang menggunakan",
-      })
+      return responseError(next, 400, "no hp sudah digunakan")
     }
 
     hash = await passwordHash(data.password)
@@ -131,12 +104,10 @@ exports.updateUser = async (req, res, next) => {
     })
 
     res.status(200).send({
-      message: "Success update data product",
+      message: "Success update data user",
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
 
@@ -144,20 +115,16 @@ exports.deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params
 
-    if (!id) {
-      res.status(400).send({
-        message: "parameter tidak ditemukan",
-      })
+    const user = await knex("users").where("id", id).del()
+
+    if (user == 0) {
+      return responseError(next, 400, "user tidak ditemukan")
     }
 
-    await knex("users").where("id", id).del()
-
     res.status(200).send({
-      message: "Success delete data product",
+      message: "Success delete data user",
     })
-  } catch (err) {
-    res.status(500).send({
-      message: "Server Error",
-    })
+  } catch (error) {
+    return responseError(next, 500, "server error")
   }
 }
