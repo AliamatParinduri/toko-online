@@ -23,7 +23,7 @@ exports.register = async (req, res, next) => {
     })
 
     res.status(201).send({
-      message: "Success tambah data product",
+      message: "Success tambah data user",
       data: {
         name: data.name,
         email: data.email,
