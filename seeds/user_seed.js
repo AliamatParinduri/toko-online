@@ -1,3 +1,5 @@
+const { passwordHash } = require("../utils/authentication")
+
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
@@ -10,7 +12,7 @@ exports.seed = async function (knex) {
       id: 1,
       name: "Aliamat Parinduri",
       email: "aliamat29@gmail.com",
-      password: "password",
+      password: await passwordHash("password"),
       phone: "6289535231352",
     },
   ])

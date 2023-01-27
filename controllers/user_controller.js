@@ -1,25 +1,22 @@
-const express = require("express")
-
 const knex = require("../knex")
+const { passwordHash } = require("../utils/authentication")
 
-const router = express.Router()
-
-router.get("/", async (req, res, next) => {
+exports.getUsers = async (req, res, next) => {
   const users = await knex("users")
   res.send({
     data: users,
   })
-})
+}
 
-router.get("/:id", async (req, res, next) => {
+exports.getUserById = async (req, res, next) => {
   const { id } = req.params
   const user = await knex("users").where("id", id).first()
   res.send({
     data: user,
   })
-})
+}
 
-router.post("/", async (req, res, next) => {
+exports.createUser = async (req, res, next) => {
   const data = req.body
   await knex("users").insert({
     name: data.name,
@@ -30,28 +27,27 @@ router.post("/", async (req, res, next) => {
   res.send({
     message: "Success tambah data product",
   })
-})
+}
 
-router.put("/:id", async (req, res, next) => {
+exports.updateUser = async (req, res, next) => {
   const data = req.body
   const { id } = req.params
+  hash = await passwordHash(data.password)
   await knex("users").where("id", id).update({
     name: data.name,
     email: data.email,
-    password: data.password,
+    password: hash,
     phone: data.phone,
   })
   res.send({
     message: "Success update data product",
   })
-})
+}
 
-router.delete("/:id", async (req, res, next) => {
+exports.deleteUser = async (req, res, next) => {
   const { id } = req.params
   await knex("users").where("id", id).del()
   res.send({
     message: "Success delete data product",
   })
-})
-
-module.exports = router
+}
