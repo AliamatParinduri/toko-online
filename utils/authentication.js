@@ -1,7 +1,7 @@
 require("dotenv/config")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const knex = require("../../knex")
+const knex = require("../knex")
 
 exports.passwordHash = async (password) => {
   const salt = await bcrypt.genSalt(+process.env.SALT || 12)

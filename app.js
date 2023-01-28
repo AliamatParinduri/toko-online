@@ -4,12 +4,8 @@ const cors = require("cors")
 const helmet = require("helmet")
 const morgan = require("morgan")
 
-const auth = require("./src/routes/authRoute")
-const products = require("./src/routes/productRoute")
-const users = require("./src/routes/userRoute")
-const category = require("./src/routes/categoryRoute")
-const coupon = require("./src/routes/couponRoute")
-const { responseMessage } = require("./src/helper/responseMessages")
+const { responseMessage } = require("./helper/responseMessages")
+const { initial } = require("./modules")
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -27,11 +23,7 @@ app.get("/", (req, res, next) => {
   })
 })
 
-app.use("/api/v1/auth", auth)
-app.use("/api/v1/products", products)
-app.use("/api/v1/users", users)
-app.use("/api/v1/categories", category)
-app.use("/api/v1/coupons", coupon)
+initial(app, express)
 
 app.use((req, res, next) => {
   return responseError(next, 404, "Page Not Found!")
