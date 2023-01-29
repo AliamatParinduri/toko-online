@@ -58,7 +58,7 @@ module.exports = (usecase) => {
         name: data.name,
         description: data.description,
         price: data.price,
-        qty: data.qty,
+        stock: data.stock,
         image: data.image,
       }
       const product = await usecase.createProduct(payload)
@@ -101,6 +101,7 @@ module.exports = (usecase) => {
         name: data.name,
         description: data.description,
         price: data.price,
+        stock: data.stock,
         image: data.image,
       }
 

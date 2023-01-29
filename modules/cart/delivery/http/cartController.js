@@ -14,7 +14,7 @@ module.exports = (usecase) => {
       const userId = req.user.id
       const cart = await usecase.getCarts(userId)
 
-      if (cart.length < 1) {
+      if (!cart) {
         return responseError(next, 404, "Cart tidak ditemukan")
       }
 
@@ -42,12 +42,12 @@ module.exports = (usecase) => {
       const userId = req.user.id
       const cart = await usecase.getCollectionByAttr("carts", id)
 
-      if (cart.user_id !== userId) {
-        return responseError(next, 401, "Akses ditolak, unauthorized!")
-      }
-
       if (!cart) {
         return responseError(next, 404, "Cart tidak ditemukan")
+      }
+
+      if (cart.user.id !== userId) {
+        return responseError(next, 401, "Akses ditolak, unauthorized!")
       }
 
       res.status(200).send({
@@ -55,6 +55,7 @@ module.exports = (usecase) => {
         data: cart,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -84,20 +85,20 @@ module.exports = (usecase) => {
         qty: data.qty,
       }
 
-      const checkExistCart = await usecase.checkExistCart(
+      const checkCartExist = await usecase.checkCartExist(
         data.product_id,
         data.user_id
       )
 
-      if (!checkExistCart) {
+      if (!checkCartExist) {
         const cart = await usecase.createCart(payload)
         if (!cart) {
           return responseError(next, 500, "Gagal tambah data cart")
         }
       } else {
-        payload.qty += checkExistCart.qty
+        payload.qty += checkCartExist.qty
 
-        const cart = await usecase.updateCart(checkExistCart.id, payload)
+        const cart = await usecase.updateCart(checkCartExist.id, payload)
 
         if (cart == 0) {
           return responseError(next, 500, "Gagal update data cart")
@@ -174,12 +175,12 @@ module.exports = (usecase) => {
       const userId = req.user.id
       const cartById = await usecase.getCollectionByAttr("carts", id)
 
-      if (cartById.user_id !== userId) {
-        return responseError(next, 401, "Akses ditolak, unauthorized!")
-      }
-
       if (!cartById) {
         return responseError(next, 400, "Cart tidak ditemukan")
+      }
+
+      if (cartById.user.id !== userId) {
+        return responseError(next, 401, "Akses ditolak, unauthorized!")
       }
 
       const cart = await usecase.deleteCartById(id)
@@ -192,6 +193,7 @@ module.exports = (usecase) => {
         message: "Success delete data cart",
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -205,6 +207,7 @@ module.exports = (usecase) => {
         userId,
         "user_id"
       )
+
       if (!cartById) {
         return responseError(next, 400, "Cart tidak ditemukan")
       }

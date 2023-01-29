@@ -15,8 +15,8 @@ module.exports = (repository) => {
     return repository.getCartByAttrWhereNot(attr1, payload1, attr2, payload2)
   }
 
-  module.checkExistCart = (productId, userId) => {
-    return repository.checkExistCart(productId, userId)
+  module.checkCartExist = (productId, userId) => {
+    return repository.checkCartExist(productId, userId)
   }
 
   module.createCart = (payload) => {
