@@ -1,10 +1,10 @@
 module.exports = (repository) => {
-  module.getCarts = () => {
-    return repository.getCarts()
+  module.getCarts = (userId) => {
+    return repository.getCarts(userId)
   }
 
-  module.getCollectionById = (col, id) => {
-    return repository.getCollectionById(col, id)
+  module.getCollectionByAttr = (col, id, attr) => {
+    return repository.getCollectionByAttr(col, id, attr)
   }
 
   module.getCartByAttribute = (attr, payload) => {
@@ -15,6 +15,10 @@ module.exports = (repository) => {
     return repository.getCartByAttrWhereNot(attr1, payload1, attr2, payload2)
   }
 
+  module.checkExistCart = (productId, userId) => {
+    return repository.checkExistCart(productId, userId)
+  }
+
   module.createCart = (payload) => {
     return repository.createCart(payload)
   }
@@ -23,8 +27,16 @@ module.exports = (repository) => {
     return repository.updateCart(id, payload)
   }
 
-  module.deleteCart = (id) => {
-    return repository.deleteCart(id)
+  module.deleteCartById = (id) => {
+    return repository.deleteCartById(id)
+  }
+
+  module.deleteCartByAttr = (attr, id) => {
+    return repository.deleteCartByAttr(attr, id)
+  }
+
+  module.deleteAllCart = (userId) => {
+    return repository.deleteAllCart(userId)
   }
 
   return module

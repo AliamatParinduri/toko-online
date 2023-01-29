@@ -65,8 +65,8 @@ module.exports = (usecase) => {
 
       res.status(200).send({
         message: "Berhasil Login",
-        data: user,
         token,
+        data: user,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")

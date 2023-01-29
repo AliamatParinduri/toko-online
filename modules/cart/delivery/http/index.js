@@ -17,7 +17,9 @@ module.exports = async (app, express, usecase) => {
 
   router.put("/:id", auth, cc.updateCart)
 
-  router.delete("/:id", auth, cc.deleteCart)
+  router.delete("/all", auth, cc.deleteAllCart)
+
+  router.delete("/:id", auth, cc.deleteCartById)
 
   app.use("/api/v1/carts", router)
 
