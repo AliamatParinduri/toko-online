@@ -24,4 +24,8 @@ exports.initial = async (app, express) => {
   const authRepo = repository.newAuthRepository(knex)
   const authUseCase = usecase.newAuthUseCase(authRepo)
   delivery.newAuthController(app, express, authUseCase)
+
+  const cartRepo = repository.newCartRepository(knex)
+  const cartUseCase = usecase.newCartUseCase(cartRepo)
+  delivery.newCartController(app, express, cartUseCase)
 }

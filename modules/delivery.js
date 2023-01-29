@@ -12,3 +12,6 @@ exports.newProductsController = newProductsController
 
 const newAuthController = require("./auth/delivery/http")
 exports.newAuthController = newAuthController
+
+const newCartController = require("./cart/delivery/http")
+exports.newCartController = newCartController

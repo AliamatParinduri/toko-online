@@ -12,3 +12,6 @@ exports.newProductsUseCase = newProductsUseCase
 
 const newAuthUseCase = require("./auth/usecase")
 exports.newAuthUseCase = newAuthUseCase
+
+const newCartUseCase = require("./cart/usecase")
+exports.newCartUseCase = newCartUseCase
