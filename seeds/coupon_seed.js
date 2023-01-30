@@ -11,6 +11,7 @@ exports.seed = async function (knex) {
       code: "1212",
       description: "lorem",
       percentage: 10,
+      qty: 0,
       fixedDiscount: 0,
     },
     {
@@ -18,6 +19,7 @@ exports.seed = async function (knex) {
       code: "AKHIRTAHUN",
       description: "lorem",
       percentage: 0,
+      qty: 0,
       fixedDiscount: 15000,
     },
     {
@@ -25,6 +27,7 @@ exports.seed = async function (knex) {
       code: "GEBYARRAMADHAN",
       description: "lorem",
       percentage: 15,
+      qty: 0,
       fixedDiscount: 0,
     },
   ])

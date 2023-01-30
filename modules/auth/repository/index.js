@@ -1,10 +1,12 @@
+const table = "users"
+
 module.exports = (knex) => {
   module.getUserByAttribute = (attr, payload) => {
-    return knex("users").where(attr, payload).first()
+    return knex(table).where(attr, payload).first()
   }
 
   module.createUser = (payload) => {
-    return knex("users").insert(payload)
+    return knex(table).insert(payload)
   }
 
   return module

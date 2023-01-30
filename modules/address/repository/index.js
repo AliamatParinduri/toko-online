@@ -1,5 +1,7 @@
 const knexnest = require("knexnest")
 
+const table = "Addresses"
+
 module.exports = (knex) => {
   module.getAddresses = (userId) => {
     const sql = knex("Addresses as a")
@@ -36,26 +38,26 @@ module.exports = (knex) => {
   }
 
   module.checkAddresseExist = (productId, userId) => {
-    return knex("Addresses")
+    return knex(table)
       .where("product_id", productId)
       .where("user_id", userId)
       .first()
   }
 
   module.createAddress = (payload) => {
-    return knex("Addresses").insert(payload)
+    return knex(table).insert(payload)
   }
 
   module.updateAddress = (id, payload) => {
-    return knex("Addresses").where("id", id).update(payload)
+    return knex(table).where("id", id).update(payload)
   }
 
   module.deleteAddressById = (id) => {
-    return knex("Addresses").where("id", id).del()
+    return knex(table).where("id", id).del()
   }
 
   module.deletedAdressByAttr = (attr, id) => {
-    return knex("Addresses").where(attr, id).del()
+    return knex(table).where(attr, id).del()
   }
 
   return module

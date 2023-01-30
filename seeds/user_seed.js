@@ -10,10 +10,8 @@ exports.seed = async function (knex) {
   await knex("users").insert([
     {
       id: 1,
-      name: "Aliamat Parinduri",
       email: "aliamat29@gmail.com",
       password: await passwordHash("password"),
-      phone: "6289535231352",
     },
   ])
 }

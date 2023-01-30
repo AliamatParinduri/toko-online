@@ -1,5 +1,7 @@
 const knexnest = require("knexnest")
 
+const table = "carts"
+
 module.exports = (knex) => {
   module.getCarts = (userId) => {
     const sql = knex("carts as c")
@@ -50,37 +52,34 @@ module.exports = (knex) => {
   }
 
   module.getCartByAttribute = (attr, payload) => {
-    return knex("carts").where(attr, payload).first()
+    return knex(table).where(attr, payload).first()
   }
 
   module.getCartByAttrWhereNot = (attr1, payload1, attr2, payload2) => {
-    return knex("carts")
-      .where(attr1, payload1)
-      .whereNot(attr2, payload2)
-      .first()
+    return knex(table).where(attr1, payload1).whereNot(attr2, payload2).first()
   }
 
   module.checkCartExist = (productId, userId) => {
-    return knex("carts")
+    return knex(table)
       .where("product_id", productId)
       .where("user_id", userId)
       .first()
   }
 
   module.createCart = (payload) => {
-    return knex("carts").insert(payload)
+    return knex(table).insert(payload)
   }
 
   module.updateCart = (id, payload) => {
-    return knex("carts").where("id", id).update(payload)
+    return knex(table).where("id", id).update(payload)
   }
 
   module.deleteCartById = (id) => {
-    return knex("carts").where("id", id).del()
+    return knex(table).where("id", id).del()
   }
 
   module.deleteCartByAttr = (attr, id) => {
-    return knex("carts").where(attr, id).del()
+    return knex(table).where(attr, id).del()
   }
 
   return module

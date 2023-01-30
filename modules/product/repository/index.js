@@ -1,33 +1,32 @@
+const table = "products"
+
 module.exports = (knex) => {
   module.getProducts = () => {
-    return knex("products")
+    return knex(table)
   }
 
   module.getProductById = (id) => {
-    return knex("products").where("id", id).first()
+    return knex(table).where("id", id).first()
   }
 
   module.getProductByAttribute = (attr, payload) => {
-    return knex("products").where(attr, payload).first()
+    return knex(table).where(attr, payload).first()
   }
 
   module.getProductByAttrWhereNot = (attr1, payload1, attr2, payload2) => {
-    return knex("products")
-      .where(attr1, payload1)
-      .whereNot(attr2, payload2)
-      .first()
+    return knex(table).where(attr1, payload1).whereNot(attr2, payload2).first()
   }
 
   module.createProduct = (payload) => {
-    return knex("products").insert(payload)
+    return knex(table).insert(payload)
   }
 
   module.updateProduct = (id, payload) => {
-    return knex("products").where("id", id).update(payload)
+    return knex(table).where("id", id).update(payload)
   }
 
   module.deleteProduct = (id) => {
-    return knex("products").where("id", id).del()
+    return knex(table).where("id", id).del()
   }
 
   return module

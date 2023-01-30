@@ -9,6 +9,9 @@ exports.up = function (knex) {
     table.string("description", 255)
     table.float("percentage")
     table.float("fixedDiscount")
+    table.integer("qty")
+    table.boolean("disposable").defaultTo(0)
+    table.boolean("isActive").defaultTo(1)
   })
 }
 

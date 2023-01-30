@@ -1,33 +1,32 @@
+const table = "coupons"
+
 module.exports = (knex) => {
   module.getCoupons = () => {
-    return knex("coupons")
+    return knex(table)
   }
 
   module.getCouponById = (id) => {
-    return knex("coupons").where("id", id).first()
+    return knex(table).where("id", id).first()
   }
 
   module.getCouponByAttribute = (attr, payload) => {
-    return knex("coupons").where(attr, payload).first()
+    return knex(table).where(attr, payload).first()
   }
 
   module.getCouponByAttrWhereNot = (attr1, payload1, attr2, payload2) => {
-    return knex("coupons")
-      .where(attr1, payload1)
-      .whereNot(attr2, payload2)
-      .first()
+    return knex(table).where(attr1, payload1).whereNot(attr2, payload2).first()
   }
 
   module.createCoupon = (payload) => {
-    return knex("coupons").insert(payload)
+    return knex(table).insert(payload)
   }
 
   module.updateCoupon = (id, payload) => {
-    return knex("coupons").where("id", id).update(payload)
+    return knex(table).where("id", id).update(payload)
   }
 
   module.deleteCoupon = (id) => {
-    return knex("coupons").where("id", id).del()
+    return knex(table).where("id", id).del()
   }
 
   return module

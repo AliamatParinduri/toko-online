@@ -1,33 +1,32 @@
+const table = "users"
+
 module.exports = (knex) => {
   module.getUsers = () => {
-    return knex("users")
+    return knex(table)
   }
 
   module.getUserById = (id) => {
-    return knex("users").where("id", id).first()
+    return knex(table).where("id", id).first()
   }
 
   module.getUserByAttribute = (attr, payload) => {
-    return knex("users").where(attr, payload).first()
+    return knex(table).where(attr, payload).first()
   }
 
   module.getUserByAttrWhereNot = (attr1, payload1, attr2, payload2) => {
-    return knex("users")
-      .where(attr1, payload1)
-      .whereNot(attr2, payload2)
-      .first()
+    return knex(table).where(attr1, payload1).whereNot(attr2, payload2).first()
   }
 
   module.createUser = (payload) => {
-    return knex("users").insert(payload)
+    return knex(table).insert(payload)
   }
 
   module.updateUser = (id, payload) => {
-    return knex("users").where("id", id).update(payload)
+    return knex(table).where("id", id).update(payload)
   }
 
   module.deleteUser = (id) => {
-    return knex("users").where("id", id).del()
+    return knex(table).where("id", id).del()
   }
 
   return module
