@@ -1,9 +1,16 @@
 require("dotenv/config")
 
-const knex = require("../knex")
+const knex = require("../knexmain")
 const { verifyToken } = require("../utils/authentication")
 
 exports.auth = async (req, res, next) => {
+  if (process.env.NODE_ENV === "development") {
+    const a = {
+      id: 1,
+    }
+    req.user = a
+    return next()
+  }
   try {
     const token = req.headers.authorization.split(" ")[1]
     if (!token) {

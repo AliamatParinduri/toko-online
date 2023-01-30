@@ -1,4 +1,4 @@
-const knex = require("../knex")
+const knex = require("../knexmain")
 
 const repository = require("./repository")
 const usecase = require("./usecase")
@@ -32,4 +32,8 @@ exports.initial = async (app, express) => {
   const addressRepo = repository.newAddressRepository(knex)
   const addressUseCase = usecase.newAddressUseCase(addressRepo)
   delivery.newAddressController(app, express, addressUseCase)
+
+  const orderRepo = repository.newOrdersRepository(knex)
+  const orderUseCase = usecase.newOrdersUseCase(orderRepo)
+  delivery.newOrdersController(app, express, orderUseCase)
 }

@@ -55,7 +55,6 @@ module.exports = (usecase) => {
         data: cart,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -193,7 +192,6 @@ module.exports = (usecase) => {
         message: "Success delete data cart",
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

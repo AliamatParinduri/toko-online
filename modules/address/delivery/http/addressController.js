@@ -55,13 +55,11 @@ module.exports = (usecase) => {
         data: address,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
 
   module.createAddress = async (req, res, next) => {
-    console.log(`kesini`)
     try {
       const data = req.body
 
@@ -86,7 +84,6 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -155,7 +152,6 @@ module.exports = (usecase) => {
         message: "Success delete data address",
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -184,7 +180,6 @@ module.exports = (usecase) => {
         message: "Success delete data address",
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

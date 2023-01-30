@@ -83,7 +83,6 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
