@@ -35,9 +35,5 @@ module.exports = (repository) => {
     return repository.deleteCartByAttr(attr, id)
   }
 
-  module.deleteAllCart = (userId) => {
-    return repository.deleteAllCart(userId)
-  }
-
   return module
 }

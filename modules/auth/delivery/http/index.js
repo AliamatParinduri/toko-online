@@ -2,8 +2,6 @@ const { auth } = require("../../../../middlewares/auth")
 const authController = require("./authController")
 
 module.exports = async (app, express, usecase) => {
-  // function
-
   // route
   const router = express.Router()
 

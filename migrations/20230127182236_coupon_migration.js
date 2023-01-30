@@ -7,6 +7,8 @@ exports.up = function (knex) {
     table.increments("id")
     table.string("code", 255).unique().notNullable()
     table.string("description", 255)
+    table.float("percentage")
+    table.float("fixedDiscount")
   })
 }
 

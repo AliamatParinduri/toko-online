@@ -2,8 +2,6 @@ const { auth } = require("../../../../middlewares/auth")
 const categoryController = require("./categoryController")
 
 module.exports = async (app, express, usecase) => {
-  // function
-
   // route
   const router = express.Router()
 

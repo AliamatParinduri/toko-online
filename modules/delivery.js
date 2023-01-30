@@ -15,3 +15,6 @@ exports.newAuthController = newAuthController
 
 const newCartController = require("./cart/delivery/http")
 exports.newCartController = newCartController
+
+const newAddressController = require("./address/delivery/http")
+exports.newAddressController = newAddressController

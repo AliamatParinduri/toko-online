@@ -41,14 +41,38 @@ module.exports = (usecase) => {
     try {
       const data = req.body
 
-      const checkCoupon = await usecase.getCouponByAttribute("code", data.code)
+      if (data.percentage < 0 || data.fixedDiscount < 0) {
+        return responseError(
+          next,
+          400,
+          "percentage atau fixed discount tidak valid"
+        )
+      }
 
+      if (data.percentage > 0 && data.fixedDiscount > 0) {
+        return responseError(
+          next,
+          400,
+          "error, pilih salah satu fixed discount atau percentage"
+        )
+      }
+
+      if (data.percentage > 100) {
+        return responseError(next, 400, "percentage tidak boleh melebihi 100%")
+      }
+
+      const checkCoupon = await usecase.getCouponByAttribute("code", data.code)
       if (checkCoupon) {
         return responseError(next, 400, "Coupon sudah digunakan")
       }
 
-      const payload = { code: data.code, description: data.description }
-      const coupon = await usecase.createcoupon(payload)
+      const payload = {
+        code: data.code,
+        description: data.description,
+        percentage: data.percentage,
+        fixedDiscount: data.fixedDiscount,
+      }
+      const coupon = await usecase.createCoupon(payload)
 
       if (!coupon) {
         return responseError(next, 500, "Gagal tambah data coupon")
@@ -59,6 +83,7 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -67,6 +92,26 @@ module.exports = (usecase) => {
     try {
       const data = req.body
       const { id } = req.params
+
+      if (data.percentage < 0 || data.fixedDiscount < 0) {
+        return responseError(
+          next,
+          400,
+          "percentage atau fixed discount tidak valid"
+        )
+      }
+
+      if (data.percentage > 0 && data.fixedDiscount > 0) {
+        return responseError(
+          next,
+          400,
+          "error, pilih salah satu fixed discount atau percentage"
+        )
+      }
+
+      if (data.percentage > 100) {
+        return responseError(next, 400, "percentage tidak boleh melebihi 100%")
+      }
 
       const couponById = await usecase.getCouponById(id)
       if (!couponById) {
@@ -84,7 +129,12 @@ module.exports = (usecase) => {
         return responseError(next, 400, "Coupon sudah digunakan")
       }
 
-      const payload = { code: data.code, description: data.description }
+      const payload = {
+        code: data.code,
+        description: data.description,
+        percentage: data.percentage,
+        fixedDiscount: data.fixedDiscount,
+      }
 
       const coupon = await usecase.updateCoupon(id, payload)
 
@@ -110,7 +160,7 @@ module.exports = (usecase) => {
         return responseError(next, 400, "Coupon tidak ditemukan")
       }
 
-      const coupon = await await usecase.deleteCoupon()
+      const coupon = await await usecase.deleteCoupon(id)
 
       if (coupon == 0) {
         return responseError(next, 500, "Gagal delete data coupon")

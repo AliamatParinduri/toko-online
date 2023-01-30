@@ -28,4 +28,8 @@ exports.initial = async (app, express) => {
   const cartRepo = repository.newCartRepository(knex)
   const cartUseCase = usecase.newCartUseCase(cartRepo)
   delivery.newCartController(app, express, cartUseCase)
+
+  const addressRepo = repository.newAddressRepository(knex)
+  const addressUseCase = usecase.newAddressUseCase(addressRepo)
+  delivery.newAddressController(app, express, addressUseCase)
 }

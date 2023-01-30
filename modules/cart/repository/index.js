@@ -83,9 +83,5 @@ module.exports = (knex) => {
     return knex("carts").where(attr, id).del()
   }
 
-  module.deleteAllCart = (user_id) => {
-    return knex("carts").where("user_id", user_id).del()
-  }
-
   return module
 }
