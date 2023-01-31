@@ -1,6 +1,6 @@
 module.exports = (repository) => {
-  module.getCategories = () => {
-    return repository.getCategories()
+  module.getCategories = ({ perPage, currentPage }) => {
+    return repository.getCategories({ perPage, currentPage })
   }
 
   module.getCategoryById = (id) => {

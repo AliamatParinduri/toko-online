@@ -11,7 +11,7 @@ exports.seed = async function (knex) {
       name: "Aliamat Parinduri",
       phone: "6289535231352",
       description: "ini deskripsi",
-      user_id: 1,
+      user_id: 3,
     },
   ])
 }

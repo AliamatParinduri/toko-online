@@ -3,14 +3,6 @@ const { responseError } = require("../../../../helper/responseMessages")
 module.exports = (usecase) => {
   module.getAddresses = async (req, res, next) => {
     try {
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, address tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const addresses = await usecase.getAddresses(userId)
 
@@ -30,15 +22,6 @@ module.exports = (usecase) => {
   module.getAddressById = async (req, res, next) => {
     try {
       const { id } = req.params
-
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, address tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const address = await usecase.getAddressesByAttribute("id", id)
 
@@ -122,15 +105,6 @@ module.exports = (usecase) => {
   module.deleteAddressById = async (req, res, next) => {
     try {
       const { id } = req.params
-
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, address tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const addressById = await usecase.getCollectionByAttr("addresses", id)
 

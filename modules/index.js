@@ -1,39 +1,20 @@
 const knex = require("../knexmain")
+const { listModules } = require("../helper/listOfModules")
 
-const repository = require("./repository")
-const usecase = require("./usecase")
-const delivery = require("./delivery")
+const datas = listModules
 
 exports.initial = async (app, express) => {
-  const categoriesRepo = repository.newCategoriesRepository(knex)
-  const categoriesUseCase = usecase.newCategoriesUseCase(categoriesRepo)
-  delivery.newCategoriesController(app, express, categoriesUseCase)
+  for (const [i, data] of datas.entries()) {
+    let newController = "controller" + i
+    let newRepository = "repository" + i
+    let newUsecase = "usecase" + i
 
-  const couponsRepo = repository.newCouponsRepository(knex)
-  const couponsUseCase = usecase.newCouponsUseCase(couponsRepo)
-  delivery.newCouponsController(app, express, couponsUseCase)
+    newController = require("./" + data + "/delivery/http")
+    newRepository = require("./" + data + "/repository")
+    newUsecase = require("./" + data + "/usecase")
 
-  const usersRepo = repository.newUsersRepository(knex)
-  const usersUseCase = usecase.newUsersUseCase(usersRepo)
-  delivery.newUsersController(app, express, usersUseCase)
-
-  const productsRepo = repository.newProductsRepository(knex)
-  const productsUseCase = usecase.newProductsUseCase(productsRepo)
-  delivery.newProductsController(app, express, productsUseCase)
-
-  const authRepo = repository.newAuthRepository(knex)
-  const authUseCase = usecase.newAuthUseCase(authRepo)
-  delivery.newAuthController(app, express, authUseCase)
-
-  const cartRepo = repository.newCartRepository(knex)
-  const cartUseCase = usecase.newCartUseCase(cartRepo)
-  delivery.newCartController(app, express, cartUseCase)
-
-  const addressRepo = repository.newAddressRepository(knex)
-  const addressUseCase = usecase.newAddressUseCase(addressRepo)
-  delivery.newAddressController(app, express, addressUseCase)
-
-  const orderRepo = repository.newOrdersRepository(knex)
-  const orderUseCase = usecase.newOrdersUseCase(orderRepo)
-  delivery.newOrdersController(app, express, orderUseCase)
+    const categoriesRepo = newRepository(knex)
+    const categoriesUseCase = newUsecase(categoriesRepo)
+    newController(app, express, categoriesUseCase)
+  }
 }

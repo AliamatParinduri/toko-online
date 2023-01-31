@@ -3,14 +3,6 @@ const { responseError } = require("../../../../helper/responseMessages")
 module.exports = (usecase) => {
   module.getCarts = async (req, res, next) => {
     try {
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, Cart tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const cart = await usecase.getCarts(userId)
 
@@ -30,15 +22,6 @@ module.exports = (usecase) => {
   module.getCartById = async (req, res, next) => {
     try {
       const { id } = req.params
-
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, Cart tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const cart = await usecase.getCollectionByAttr("carts", id)
 
@@ -162,15 +145,6 @@ module.exports = (usecase) => {
   module.deleteCartById = async (req, res, next) => {
     try {
       const { id } = req.params
-
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, Cart tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const cartById = await usecase.getCollectionByAttr("carts", id)
 

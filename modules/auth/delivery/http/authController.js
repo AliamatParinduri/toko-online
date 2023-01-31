@@ -48,7 +48,11 @@ module.exports = (usecase) => {
     try {
       const data = req.body
 
-      const user = await await usecase.getUserByAttribute("email", data.email)
+      const user = await await usecase.getUserByAttribute(
+        "email",
+        data.email,
+        data.type
+      )
       if (!user) {
         return responseError(next, 400, "Email atau Password salah")
       }
@@ -61,6 +65,7 @@ module.exports = (usecase) => {
       const token = await generateToken({
         id: user.id,
         email: user.email,
+        type: user.type,
       })
 
       res.status(200).send({
@@ -69,6 +74,7 @@ module.exports = (usecase) => {
         data: user,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

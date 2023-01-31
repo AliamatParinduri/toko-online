@@ -3,6 +3,7 @@ const express = require("express")
 const cors = require("cors")
 const helmet = require("helmet")
 const morgan = require("morgan")
+const { attachPaginate } = require("knex-paginate")
 
 const { responseMessage } = require("./helper/responseMessages")
 const { initial } = require("./modules")
@@ -10,6 +11,7 @@ const { initial } = require("./modules")
 const app = express()
 const PORT = process.env.PORT || 5000
 
+attachPaginate()
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))

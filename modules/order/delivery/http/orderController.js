@@ -3,14 +3,6 @@ const { responseError } = require("../../../../helper/responseMessages")
 module.exports = (usecase) => {
   module.getAllOrdersByUsersId = async (req, res, next) => {
     try {
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, Cart tidak ditemukan"
-        )
-      }
-
       const userId = req.user.id
       const data = await usecase.getAllOrdersByUsersId(userId)
       res.status(200).send({
@@ -25,15 +17,6 @@ module.exports = (usecase) => {
   module.checkout = async (req, res, next) => {
     try {
       const data = req.body
-
-      if (!req.user) {
-        return responseError(
-          next,
-          401,
-          "Anda belum login, tidak bisa melakukan checkout"
-        )
-      }
-
       const userId = req.user.id
       const payload = {
         user_id: userId,

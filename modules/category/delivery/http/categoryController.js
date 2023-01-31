@@ -3,7 +3,11 @@ const { responseError } = require("../../../../helper/responseMessages")
 module.exports = (usecase) => {
   module.getCategories = async (req, res, next) => {
     try {
-      const categories = await usecase.getCategories()
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
+      const categories = await usecase.getCategories(payload)
 
       if (categories.length < 1) {
         return responseError(next, 404, "Data category tidak ditemukan")
@@ -14,6 +18,7 @@ module.exports = (usecase) => {
         data: categories,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
