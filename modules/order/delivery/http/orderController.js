@@ -14,7 +14,6 @@ module.exports = (usecase) => {
         data,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

@@ -19,7 +19,6 @@ module.exports = (usecase) => {
         data: cart,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -67,7 +66,7 @@ module.exports = (usecase) => {
       }
 
       const payload = {
-        user_id: data.user_id,
+        customer_id: data.user_id,
         product_id: data.product_id,
         qty: data.qty,
       }
@@ -127,7 +126,7 @@ module.exports = (usecase) => {
       }
 
       const payload = {
-        user_id: data.user_id,
+        customer_id: data.user_id,
         product_id: data.product_id,
         qty: data.qty,
       }
@@ -182,15 +181,14 @@ module.exports = (usecase) => {
       const cartById = await usecase.getCollectionByAttr(
         "carts",
         userId,
-        "user_id"
+        "customer_id"
       )
 
       if (!cartById) {
         return responseError(next, 400, "Cart tidak ditemukan")
       }
 
-      const cart = await usecase.deleteCartByAttr("user_id", userId)
-
+      const cart = await usecase.deleteCartByAttr("customer_id", userId)
       if (cart == 0) {
         return responseError(next, 500, "Gagal delete data cart")
       }

@@ -1,8 +1,16 @@
 const table = "coupons"
 
 module.exports = (knex) => {
-  module.getCoupons = ({ perPage, currentPage }) => {
-    return knex(table).paginate({ perPage, currentPage })
+  module.getCoupons = async (userId, { perPage, currentPage }) => {
+    let getCoupons = await knex("orders")
+      .select("coupon_id")
+      .where("customer_id", userId)
+      .groupBy("coupon_id")
+      .then((coupons) => {
+        return coupons.map((coupon) => coupon.coupon_id)
+      })
+
+    return knex(table).whereNotIn("id", getCoupons)
   }
 
   module.getCouponById = (id) => {

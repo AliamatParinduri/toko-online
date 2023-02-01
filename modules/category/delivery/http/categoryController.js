@@ -18,7 +18,6 @@ module.exports = (usecase) => {
         data: categories,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

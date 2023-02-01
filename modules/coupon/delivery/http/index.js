@@ -7,7 +7,7 @@ module.exports = async (app, express, usecase) => {
 
   const cc = couponController(usecase)
 
-  router.get("/", auth, cc.getCoupons)
+  router.get("/", auth, cc.getCouponsByUser)
 
   router.get("/:id", auth, cc.getCouponById)
 

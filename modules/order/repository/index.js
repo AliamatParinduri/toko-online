@@ -32,7 +32,7 @@ module.exports = (knex) => {
         .insert({
           total: payload.total,
           address_id: payload.address_id,
-          user_id: payload.user_id,
+          customer_id: payload.user_id,
           coupon_id: payload.coupon_id,
         })
         .into(tableHeader)

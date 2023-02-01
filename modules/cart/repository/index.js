@@ -33,7 +33,7 @@ module.exports = (knex) => {
           "c.id as id",
           "c.qty as qty",
           "u.id as user_id",
-          "u.name as user_name",
+          "cus.name as user_name",
           "u.email as user_email",
           "p.id as product_id",
           "p.name as product_name",
@@ -44,8 +44,8 @@ module.exports = (knex) => {
         )
         .where("c.id", id)
         .innerJoin("products as p", "p.id", "=", "c.product_id")
-        .innerJoin("users as u", "u.id", "=", "c.user_id")
-
+        .innerJoin("users as u", "u.id", "=", "c.customer_id")
+        .innerJoin("customers as cus", "u.id", "=", "cus.user_id")
       return knexnest(sql)
     } else {
       return knex(col).where(attr, id).first()
@@ -63,7 +63,7 @@ module.exports = (knex) => {
   module.checkCartExist = (productId, userId) => {
     return knex(table)
       .where("product_id", productId)
-      .where("user_id", userId)
+      .where("customer_id", userId)
       .first()
   }
 

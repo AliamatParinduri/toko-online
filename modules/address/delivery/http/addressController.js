@@ -42,7 +42,6 @@ module.exports = (usecase) => {
         data: address,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -73,7 +72,6 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -154,17 +152,14 @@ module.exports = (usecase) => {
       }
 
       const address = await usecase.deletedAdressByAttr("user_id", userId)
-      console.log(address)
-      return
       if (address == 0) {
         return responseError(next, 500, "Gagal delete data address")
       }
 
       res.status(200).send({
-        message: "Success delete data address",
+        message: "Success delete semua data address",
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
