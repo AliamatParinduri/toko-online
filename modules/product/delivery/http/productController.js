@@ -3,7 +3,11 @@ const { responseError } = require("../../../../helper/responseMessages")
 module.exports = (usecase) => {
   module.getProducts = async (req, res, next) => {
     try {
-      const product = await usecase.getProducts()
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
+      const product = await usecase.getProducts(payload)
 
       if (product.length < 1) {
         return responseError(next, 404, "Product tidak ditemukan")

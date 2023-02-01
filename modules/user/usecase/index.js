@@ -1,6 +1,6 @@
 module.exports = (repository) => {
-  module.getUsers = () => {
-    return repository.getUsers()
+  module.getUsers = (payload) => {
+    return repository.getUsers(payload)
   }
 
   module.getUserById = (id) => {

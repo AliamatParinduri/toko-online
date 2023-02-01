@@ -1,8 +1,8 @@
 const table = "coupons"
 
 module.exports = (knex) => {
-  module.getCoupons = () => {
-    return knex(table)
+  module.getCoupons = ({ perPage, currentPage }) => {
+    return knex(table).paginate({ perPage, currentPage })
   }
 
   module.getCouponById = (id) => {

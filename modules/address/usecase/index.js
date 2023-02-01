@@ -1,6 +1,6 @@
 module.exports = (repository) => {
-  module.getAddresses = (userId) => {
-    return repository.getAddresses(userId)
+  module.getAddresses = (userId, payload) => {
+    return repository.getAddresses(userId, payload)
   }
 
   module.getCollectionByAttr = (col, id, attr) => {

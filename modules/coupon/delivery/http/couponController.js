@@ -3,7 +3,11 @@ const { responseError } = require("../../../../helper/responseMessages")
 module.exports = (usecase) => {
   module.getCoupons = async (req, res, next) => {
     try {
-      const coupons = await usecase.getCoupons()
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
+      const coupons = await usecase.getCoupons(payload)
 
       if (coupons.length < 1) {
         return responseError(next, 404, "Coupon tidak ditemukan")

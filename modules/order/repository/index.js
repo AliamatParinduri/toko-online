@@ -4,23 +4,23 @@ const tableHeader = "orders"
 const tableDetail = "orders_detail"
 
 module.exports = (knex) => {
-  module.getAllOrdersByUsersId = (userId) => {
+  module.getAllOrdersByUsersId = (userId, { perPage, currentPage }) => {
     const knexSql = knex
       .select(
-        "orders.id as _id",
-        "orders.total as _total",
-        "addresses.id as _address_id",
-        "addresses.address as _address_address",
-        "coupons.id as _coupon_id",
-        "coupons.description as _coupon_description",
-        "coupons.percentage as _coupon_percentage",
-        "coupons.fixedDiscount as _coupon_fixedDiscount"
+        "orders.id as id",
+        "orders.total as total",
+        "addresses.id as address_id",
+        "addresses.address as address_address",
+        "coupons.id as coupon_id",
+        "coupons.description as coupon_description",
+        "coupons.percentage as coupon_percentage",
+        "coupons.fixedDiscount as coupon_fixedDiscount"
       )
-      .where("orders.user_id", userId)
+      .where("orders.customer_id", userId)
       .table(tableHeader)
-      // .innerJoin(tableDetail, 'orders_detail.order_id','=', 'orders.id')
       .innerJoin("addresses", "addresses.id", "=", "orders.address_id")
       .innerJoin("coupons", "coupons.id", "=", "orders.coupon_id")
+      .paginate({ perPage, currentPage })
     return knexnest(knexSql)
   }
 

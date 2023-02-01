@@ -4,7 +4,11 @@ const { passwordHash } = require("../../../../utils/authentication")
 module.exports = (usecase) => {
   module.getUsers = async (req, res, next) => {
     try {
-      const user = await usecase.getUsers()
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
+      const user = await usecase.getUsers(payload)
 
       if (user.length < 1) {
         return responseError(next, 404, "User tidak ditemukan")

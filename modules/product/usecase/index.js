@@ -1,6 +1,6 @@
 module.exports = (repository) => {
-  module.getProducts = () => {
-    return repository.getProducts()
+  module.getProducts = (payload) => {
+    return repository.getProducts(payload)
   }
 
   module.getProductById = (id) => {

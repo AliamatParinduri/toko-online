@@ -14,12 +14,12 @@ exports.seed = async function (knex) {
       password: await passwordHash("password"),
     },
     {
-      id: 1,
+      id: 2,
       email: "aliamat30@gmail.com",
       password: await passwordHash("password"),
     },
     {
-      id: 1,
+      id: 3,
       email: "aliamat31@gmail.com",
       password: await passwordHash("password"),
     },

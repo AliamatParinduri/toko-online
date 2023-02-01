@@ -1,8 +1,8 @@
 const table = "users"
 
 module.exports = (knex) => {
-  module.getUsers = () => {
-    return knex(table)
+  module.getUsers = ({ perpage, currentPage }) => {
+    return knex(table).paginate({ perpage, currentPage })
   }
 
   module.getUserById = (id) => {

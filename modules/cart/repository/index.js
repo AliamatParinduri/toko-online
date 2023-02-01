@@ -3,25 +3,26 @@ const knexnest = require("knexnest")
 const table = "carts"
 
 module.exports = (knex) => {
-  module.getCarts = (userId) => {
+  module.getCarts = (userId, { perPage, currentPage }) => {
     const sql = knex("carts as c")
       .select(
-        "c.id as _id",
-        "c.qty as _qty",
-        "u.id as _user_id",
-        "u.name as _user_name",
-        "u.email as _user_email",
-        "p.id as _product_id",
-        "p.name as _product_name",
-        "p.description as _product_description",
-        "p.stock as _product_stock",
-        "p.image as _product_image",
-        "p.price as _product_price"
+        "c.id as id",
+        "c.qty as qty",
+        "u.id as user_id",
+        "cus.name as user_name",
+        "u.email as user_email",
+        "p.id as product_id",
+        "p.name as product_name",
+        "p.description as product_description",
+        "p.stock as product_stock",
+        "p.image as product_image",
+        "p.price as product_price"
       )
       .where("user_id", userId)
       .innerJoin("products as p", "p.id", "=", "c.product_id")
-      .innerJoin("users as u", "u.id", "=", "c.user_id")
-
+      .innerJoin("users as u", "u.id", "=", "c.customer_id")
+      .innerJoin("customers as cus", "u.id", "=", "cus.user_id")
+      .paginate({ perPage, currentPage })
     return knexnest(sql)
   }
 

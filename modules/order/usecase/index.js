@@ -1,6 +1,6 @@
 module.exports = (repository) => {
-  module.getAllOrdersByUsersId = (userId) => {
-    return repository.getAllOrdersByUsersId(userId)
+  module.getAllOrdersByUsersId = (userId, payload) => {
+    return repository.getAllOrdersByUsersId(userId, payload)
   }
   module.checkout = (payload) => {
     return repository.checkout(payload)

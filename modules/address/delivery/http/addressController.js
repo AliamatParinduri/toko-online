@@ -4,8 +4,12 @@ module.exports = (usecase) => {
   module.getAddresses = async (req, res, next) => {
     try {
       const userId = req.user.id
-      const addresses = await usecase.getAddresses(userId)
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
 
+      const addresses = await usecase.getAddresses(userId, payload)
       if (!addresses) {
         return responseError(next, 404, "address tidak ditemukan")
       }
@@ -29,7 +33,7 @@ module.exports = (usecase) => {
         return responseError(next, 404, "address tidak ditemukan")
       }
 
-      if (address.user.id !== userId) {
+      if (address.user_id !== userId) {
         return responseError(next, 401, "Akses ditolak, unauthorized!")
       }
 
@@ -38,6 +42,7 @@ module.exports = (usecase) => {
         data: address,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -45,8 +50,9 @@ module.exports = (usecase) => {
   module.createAddress = async (req, res, next) => {
     try {
       const data = req.body
+      const userId = req.user.id
 
-      const checkUser = await usecase.getCollectionByAttr("users", data.user_id)
+      const checkUser = await usecase.getCollectionByAttr("users", userId)
 
       if (!checkUser) {
         return responseError(next, 400, "User tidak ditemukan")
@@ -54,7 +60,7 @@ module.exports = (usecase) => {
 
       const payload = {
         address: data.address,
-        user_id: data.user_id,
+        user_id: userId,
       }
 
       const address = await usecase.createAddress(payload)
@@ -67,6 +73,7 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
@@ -75,11 +82,15 @@ module.exports = (usecase) => {
     try {
       const data = req.body
       const { id } = req.params
+      const userId = req.user.id
 
-      const checkUser = await usecase.getCollectionByAttr("users", data.user_id)
+      const address = await usecase.getAddressesByAttribute("id", id)
+      if (!address) {
+        return responseError(next, 404, "address tidak ditemukan")
+      }
 
-      if (!checkUser) {
-        return responseError(next, 400, "User tidak ditemukan")
+      if (address.user_id !== userId) {
+        return responseError(next, 401, "Akses ditolak, unauthorized!")
       }
 
       const payload = {
@@ -87,9 +98,8 @@ module.exports = (usecase) => {
         user_id: data.user_id,
       }
 
-      const address = await usecase.updateAddress(id, payload)
-
-      if (address == 0) {
+      const addressUpdated = await usecase.updateAddress(id, payload)
+      if (addressUpdated == 0) {
         return responseError(next, 500, "Gagal update data address")
       }
 
@@ -106,19 +116,18 @@ module.exports = (usecase) => {
     try {
       const { id } = req.params
       const userId = req.user.id
-      const addressById = await usecase.getCollectionByAttr("addresses", id)
 
-      if (!addressById) {
-        return responseError(next, 400, "address tidak ditemukan")
+      const address = await usecase.getAddressesByAttribute("id", id)
+      if (!address) {
+        return responseError(next, 404, "address tidak ditemukan")
       }
 
-      if (addressById.user_id !== userId) {
+      if (address.user_id !== userId) {
         return responseError(next, 401, "Akses ditolak, unauthorized!")
       }
 
-      const address = await usecase.deleteAddressById(id)
-
-      if (address == 0) {
+      const addressDeleted = await usecase.deleteAddressById(id)
+      if (addressDeleted == 0) {
         return responseError(next, 500, "Gagal delete data address")
       }
 
@@ -135,9 +144,9 @@ module.exports = (usecase) => {
       const userId = req.user.id
 
       const addressById = await usecase.getCollectionByAttr(
-        "addresses",
+        "customers_addresses",
         userId,
-        "user_id"
+        "customer_id"
       )
 
       if (!addressById) {
@@ -145,7 +154,8 @@ module.exports = (usecase) => {
       }
 
       const address = await usecase.deletedAdressByAttr("user_id", userId)
-
+      console.log(address)
+      return
       if (address == 0) {
         return responseError(next, 500, "Gagal delete data address")
       }
@@ -154,6 +164,7 @@ module.exports = (usecase) => {
         message: "Success delete data address",
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

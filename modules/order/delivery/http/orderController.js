@@ -4,12 +4,17 @@ module.exports = (usecase) => {
   module.getAllOrdersByUsersId = async (req, res, next) => {
     try {
       const userId = req.user.id
-      const data = await usecase.getAllOrdersByUsersId(userId)
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
+      const data = await usecase.getAllOrdersByUsersId(userId, payload)
       res.status(200).send({
         message: "Success mendapatkan data order",
         data,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

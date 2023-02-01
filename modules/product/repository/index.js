@@ -1,8 +1,8 @@
 const table = "products"
 
 module.exports = (knex) => {
-  module.getProducts = () => {
-    return knex(table)
+  module.getProducts = ({ perPage, currentPage }) => {
+    return knex(table).paginate({ perPage, currentPage })
   }
 
   module.getProductById = (id) => {

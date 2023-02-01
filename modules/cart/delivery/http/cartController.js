@@ -4,7 +4,11 @@ module.exports = (usecase) => {
   module.getCarts = async (req, res, next) => {
     try {
       const userId = req.user.id
-      const cart = await usecase.getCarts(userId)
+      const payload = {
+        perPage: req.query.perPage || 5,
+        currentPage: req.query.currentPage || 1,
+      }
+      const cart = await usecase.getCarts(userId, payload)
 
       if (!cart) {
         return responseError(next, 404, "Cart tidak ditemukan")
@@ -15,6 +19,7 @@ module.exports = (usecase) => {
         data: cart,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

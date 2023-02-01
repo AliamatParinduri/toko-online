@@ -1,6 +1,6 @@
 module.exports = (repository) => {
-  module.getCoupons = () => {
-    return repository.getCoupons()
+  module.getCoupons = (payload) => {
+    return repository.getCoupons(payload)
   }
 
   module.getCouponById = (id) => {

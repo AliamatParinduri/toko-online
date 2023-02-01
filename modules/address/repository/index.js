@@ -1,21 +1,26 @@
 const knexnest = require("knexnest")
 
-const table = "Addresses"
+const table = "addresses"
 
 module.exports = (knex) => {
-  module.getAddresses = (userId) => {
-    const sql = knex("Addresses as a")
-      .select(
-        "a.id as _id",
-        "a.address as _address",
-        "u.id as _user_id",
-        "u.name as _user_name",
-        "u.email as _user_email"
+  module.getAddresses = (userId, { perPage, currentPage }) => {
+    return knex("users")
+      .select(`${table}.id`, `${table}.address`)
+      .where("users.id", userId)
+      .innerJoin("customers", "customers.user_id", "=", "users.id")
+      .innerJoin(
+        "customers_Addresses",
+        "customers_Addresses.customer_id",
+        "=",
+        "customers.id"
       )
-      .where("user_id", userId)
-      .innerJoin("users as u", "u.id", "=", "a.user_id")
-
-    return knexnest(sql)
+      .innerJoin(
+        "addresses",
+        "customers_addresses.address_id",
+        "=",
+        "addresses.id"
+      )
+      .paginate({ perPage, currentPage })
   }
 
   module.getCollectionByAttr = (col, id, attr = "id") => {
@@ -23,18 +28,23 @@ module.exports = (knex) => {
   }
 
   module.getAddressesByAttribute = (attr, payload) => {
-    const sql = knex("Addresses as a")
-      .select(
-        "a.id as id",
-        "a.address as address",
-        "u.id as user_id",
-        "u.name as user_name",
-        "u.email as user_email"
+    return knex("users")
+      .select(`${table}.id`, `${table}.address`, "customers.user_id")
+      .where("addresses." + attr, payload)
+      .innerJoin("customers", "customers.user_id", "=", "users.id")
+      .innerJoin(
+        "customers_Addresses",
+        "customers_Addresses.customer_id",
+        "=",
+        "customers.id"
       )
-      .where("a." + attr, payload)
-      .innerJoin("users as u", "u.id", "=", "a.user_id")
-
-    return knexnest(sql)
+      .innerJoin(
+        "addresses",
+        "customers_addresses.address_id",
+        "=",
+        "addresses.id"
+      )
+      .first()
   }
 
   module.checkAddresseExist = (productId, userId) => {
@@ -44,8 +54,14 @@ module.exports = (knex) => {
       .first()
   }
 
-  module.createAddress = (payload) => {
-    return knex(table).insert(payload)
+  module.createAddress = async (payload) => {
+    const addresses = await knex(table).insert({
+      address: payload.address,
+    })
+    return knex("customers_addresses").insert({
+      customer_id: payload.user_id,
+      address_id: addresses,
+    })
   }
 
   module.updateAddress = (id, payload) => {
@@ -57,7 +73,30 @@ module.exports = (knex) => {
   }
 
   module.deletedAdressByAttr = (attr, id) => {
-    return knex(table).where(attr, id).del()
+    // return knex(table)
+    //   .where(`customers.${attr}`, id)
+    //   .innerJoin(
+    //     "customers_addresses",
+    //     "customers_addresses.address_id",
+    //     "=",
+    //     "addresses.id"
+    //   )
+    //   .innerJoin(
+    //     "customers",
+    //     "customers.id",
+    //     "=",
+    //     "customers_addresses.customer_id"
+    //   )
+    //   .delete()
+
+    return knex("customers_addresses")
+      .whereIn("customer_id", function () {
+        this.select("id").from("customers").where(attr, id)
+      })
+      .whereIn("address_id", function () {
+        this.select("id").from("addresses")
+      })
+      .del()
   }
 
   return module
