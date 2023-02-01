@@ -1,14 +1,17 @@
 const { responseError } = require("../../../../helper/responseMessages")
 
 module.exports = (usecase) => {
-  module.getAllOrdersByUsersId = async (req, res, next) => {
+  module.getAllOrdersByCustomer = async (req, res, next) => {
     try {
-      const userId = req.user.id
+      if (req.user.type != "customers") {
+        return responseError(next, 401, "Akses ditolak, unauthorized!")
+      }
+      const typeId = req.user.type_id
       const payload = {
         perPage: req.query.perPage || 5,
         currentPage: req.query.currentPage || 1,
       }
-      const data = await usecase.getAllOrdersByUsersId(userId, payload)
+      const data = await usecase.getAllOrdersByCustomer(typeId, payload)
       res.status(200).send({
         message: "Success mendapatkan data order",
         data,
@@ -21,9 +24,9 @@ module.exports = (usecase) => {
   module.checkout = async (req, res, next) => {
     try {
       const data = req.body
-      const userId = req.user.id
+      const type = req.user.type_id
       const payload = {
-        user_id: userId,
+        customer_id: type,
         address_id: data.address_id,
         coupon_id: data.coupon_id,
         cart: data.cart,
@@ -40,6 +43,7 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }

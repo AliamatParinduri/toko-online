@@ -73,22 +73,6 @@ module.exports = (knex) => {
   }
 
   module.deletedAdressByAttr = (attr, id) => {
-    // return knex(table)
-    //   .where(`customers.${attr}`, id)
-    //   .innerJoin(
-    //     "customers_addresses",
-    //     "customers_addresses.address_id",
-    //     "=",
-    //     "addresses.id"
-    //   )
-    //   .innerJoin(
-    //     "customers",
-    //     "customers.id",
-    //     "=",
-    //     "customers_addresses.customer_id"
-    //   )
-    //   .delete()
-
     return knex("customers_addresses")
       .whereIn("customer_id", function () {
         this.select("id").from("customers").where(attr, id)

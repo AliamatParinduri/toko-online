@@ -7,7 +7,7 @@ module.exports = async (app, express, usecase) => {
 
   const oc = orderController(usecase)
 
-  router.get("/orders", auth, oc.getAllOrdersByUsersId)
+  router.get("/orders", auth, oc.getAllOrdersByCustomer)
 
   router.post("/checkout", auth, oc.checkout)
 

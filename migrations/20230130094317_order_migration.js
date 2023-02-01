@@ -12,6 +12,9 @@ exports.up = function (knex) {
     table.foreign("customer_id").references("customers.id")
     table.integer("coupon_id").notNullable()
     table.foreign("coupon_id").references("coupons.id")
+    table
+      .enum("status", ["ordered", "delivered", "canceled", "completed"])
+      .defaultTo("ordered")
   })
 }
 

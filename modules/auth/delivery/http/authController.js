@@ -53,6 +53,7 @@ module.exports = (usecase) => {
         data.email,
         data.type
       )
+
       if (!user) {
         return responseError(next, 400, "Email atau Password salah")
       }
@@ -66,6 +67,7 @@ module.exports = (usecase) => {
         id: user.id,
         email: user.email,
         type: user.type,
+        type_id: user.type_id,
       })
 
       res.status(200).send({

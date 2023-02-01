@@ -5,13 +5,19 @@ module.exports = (knex) => {
     let sql = knex(table).select("*", knex.raw("? as ??", [type, "type"]))
     switch (type) {
       case "customers":
-        sql = sql.innerJoin("customers", "customers.user_id", "=", "users.id")
+        sql = sql
+          .select("customers.id as type_id")
+          .innerJoin("customers", "customers.user_id", "=", "users.id")
         break
       case "employees":
-        sql = sql.innerJoin("employees", "employees.user_id", "=", "users.id")
+        sql = sql
+          .select("employees.id as type_id")
+          .innerJoin("employees", "employees.user_id", "=", "users.id")
         break
       case "stores":
-        sql = sql.innerJoin("stroes", "stroes.user_id", "=", "users.id")
+        sql = sql
+          .select("stores.id as type_id")
+          .innerJoin("stores", "stores.user_id", "=", "users.id")
         break
 
       default:
