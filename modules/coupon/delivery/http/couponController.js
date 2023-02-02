@@ -16,7 +16,7 @@ module.exports = (usecase) => {
 
       return res.status(200).send({
         message: "Success mendapatkan data coupon",
-        data: coupons,
+        ...coupons,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")

@@ -1,11 +1,9 @@
-const knexnest = require("knexnest")
-
 const tableHeader = "orders"
 const tableDetail = "orders_detail"
 
 module.exports = (knex) => {
   module.getAllOrdersByCustomer = (customerId, { perPage, currentPage }) => {
-    const knexSql = knex
+    return knex
       .select(
         "orders.id as id",
         "orders.total as total",
@@ -23,7 +21,37 @@ module.exports = (knex) => {
       .innerJoin("addresses", "addresses.id", "=", "orders.address_id")
       .innerJoin("coupons", "coupons.id", "=", "orders.coupon_id")
       .paginate({ perPage, currentPage })
-    return knexnest(knexSql)
+      .then((result) => {
+        const data = result.data.map((data) => {
+          return {
+            id: data.id,
+            total: data.total,
+            status: data.total,
+            address: {
+              id: data.address_id,
+              address: data.address_address,
+            },
+            coupon: {
+              id: data.coupon_id,
+              description: data.coupon_description,
+              percentage: data.coupon_percentage,
+              fixedDiscount: data.coupon_fixedDiscount,
+            },
+          }
+        })
+
+        return {
+          data,
+          pagination: {
+            total: result.pagination.total,
+            lastPage: result.pagination.lastPage,
+            perPage: result.pagination.perPage,
+            currentPage: result.pagination.currentPage,
+            from: result.pagination.from,
+            to: result.pagination.to,
+          },
+        }
+      })
   }
 
   module.getCouponByAttribute = (attr, payload) => {

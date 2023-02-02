@@ -4,7 +4,7 @@ const table = "carts"
 
 module.exports = (knex) => {
   module.getCarts = (userId, { perPage, currentPage }) => {
-    const sql = knex("carts as c")
+    return knex("carts as c")
       .select(
         "c.id as id",
         "c.qty as qty",
@@ -23,7 +23,39 @@ module.exports = (knex) => {
       .innerJoin("users as u", "u.id", "=", "c.customer_id")
       .innerJoin("customers as cus", "u.id", "=", "cus.user_id")
       .paginate({ perPage, currentPage })
-    return knexnest(sql)
+      .then((result) => {
+        const data = result.data.map((data) => {
+          return {
+            id: data.id,
+            qty: data.qty,
+            user: {
+              id: data.user_id,
+              name: data.user_name,
+              email: data.user_email,
+            },
+            product: {
+              id: data.product_id,
+              name: data.product_name,
+              description: data.product_description,
+              price: data.product_price,
+              stock: data.product_stock,
+              image: data.product_image,
+            },
+          }
+        })
+
+        return {
+          data,
+          pagination: {
+            total: result.pagination.total,
+            lastPage: result.pagination.lastPage,
+            perPage: result.pagination.perPage,
+            currentPage: result.pagination.currentPage,
+            from: result.pagination.from,
+            to: result.pagination.to,
+          },
+        }
+      })
   }
 
   module.getCollectionByAttr = (col, id, attr = "id") => {

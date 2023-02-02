@@ -16,7 +16,7 @@ module.exports = (usecase) => {
 
       return res.status(200).send({
         message: "Success mendapatkan data address",
-        data: addresses,
+        ...addresses,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")
@@ -37,6 +37,7 @@ module.exports = (usecase) => {
         return responseError(next, 401, "Akses ditolak, unauthorized!")
       }
 
+      delete address.user_id
       res.status(200).send({
         message: "Success mendapatkan data address",
         data: address,

@@ -14,7 +14,7 @@ module.exports = (usecase) => {
       const data = await usecase.getAllOrdersByCustomer(typeId, payload)
       res.status(200).send({
         message: "Success mendapatkan data order",
-        data,
+        ...data,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")

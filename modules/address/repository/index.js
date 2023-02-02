@@ -5,7 +5,13 @@ const table = "addresses"
 module.exports = (knex) => {
   module.getAddresses = (userId, { perPage, currentPage }) => {
     return knex("users")
-      .select(`${table}.id`, `${table}.address`)
+      .select(
+        `${table}.id`,
+        "customers.name",
+        `${table}.address`,
+        `users.email`,
+        "customers.phone"
+      )
       .where("users.id", userId)
       .innerJoin("customers", "customers.user_id", "=", "users.id")
       .innerJoin(
@@ -29,7 +35,14 @@ module.exports = (knex) => {
 
   module.getAddressesByAttribute = (attr, payload) => {
     return knex("users")
-      .select(`${table}.id`, `${table}.address`, "customers.user_id")
+      .select(
+        `${table}.id`,
+        "customers.name",
+        `${table}.address`,
+        `users.email`,
+        "customers.phone",
+        "customers.user_id"
+      )
       .where("addresses." + attr, payload)
       .innerJoin("customers", "customers.user_id", "=", "users.id")
       .innerJoin(

@@ -10,7 +10,9 @@ module.exports = (knex) => {
         return coupons.map((coupon) => coupon.coupon_id)
       })
 
-    return knex(table).whereNotIn("id", getCoupons)
+    return knex(table)
+      .whereNotIn("id", getCoupons)
+      .paginate({ perPage, currentPage })
   }
 
   module.getCouponById = (id) => {
