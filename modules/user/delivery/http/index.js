@@ -9,13 +9,17 @@ module.exports = async (app, express, usecase) => {
 
   router.get("/", auth, uc.getUsers)
 
-  router.get("/:id", auth, uc.getUserById)
+  router.get("/employees", auth, uc.getUsers)
+
+  router.get("/stores", auth, uc.getUsers)
+
+  router.get("/:id/:type", auth, uc.getUserById)
 
   router.post("/", auth, uc.createUser)
 
-  router.put("/:id", auth, uc.updateUser)
+  router.put("/:id/:type", auth, uc.updateUser)
 
-  router.delete("/:id", auth, uc.deleteUser)
+  router.delete("/:id/:type", auth, uc.deleteUser)
 
   app.use("/api/v1/users", router)
 

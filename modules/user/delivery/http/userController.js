@@ -8,7 +8,7 @@ module.exports = (usecase) => {
         perPage: req.query.perPage || 5,
         currentPage: req.query.currentPage || 1,
       }
-      const user = await usecase.getUsers(payload)
+      const user = await usecase.getUsers(req.url, payload)
 
       if (user.length < 1) {
         return responseError(next, 404, "User tidak ditemukan")
@@ -16,7 +16,7 @@ module.exports = (usecase) => {
 
       return res.status(200).send({
         message: "Success mendapatkan data user",
-        data: user,
+        ...user,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")
@@ -25,14 +25,18 @@ module.exports = (usecase) => {
 
   module.getUserById = async (req, res, next) => {
     try {
-      const { id } = req.params
+      const { id, type } = req.params
 
-      const user = await usecase.getUserById(id)
+      if (!(type == "customers" || type == "employees" || type == "stores")) {
+        return responseError(next, 400, "Error, parameter type user tidak ada")
+      }
 
+      const user = await usecase.getUserById(type, id)
       if (!user) {
         return responseError(next, 404, "User tidak ditemukan")
       }
 
+      delete data.user_id
       res.status(200).send({
         message: "Success mendapatkan data user",
         data: user,
@@ -83,9 +87,9 @@ module.exports = (usecase) => {
   module.updateUser = async (req, res, next) => {
     try {
       const data = req.body
-      const { id } = req.params
+      const { id, type } = req.params
 
-      const userById = await usecase.getUserById(id)
+      const userById = await usecase.getUserById(type, id)
       if (!userById) {
         return responseError(next, 400, "User tidak ditemukan")
       }
@@ -94,7 +98,8 @@ module.exports = (usecase) => {
         "email",
         data.email,
         "id",
-        id
+        id,
+        type
       )
 
       if (checkEmail) {
@@ -105,7 +110,8 @@ module.exports = (usecase) => {
         "phone",
         data.phone,
         "id",
-        id
+        id,
+        type
       )
 
       if (checkPhone) {
@@ -118,14 +124,16 @@ module.exports = (usecase) => {
         email: data.email,
         password: hash,
         phone: data.phone,
+        user_id: userById.data.user_id,
       }
 
       const User = await usecase.updateUser(id, payload)
-
       if (User == 0) {
         return responseError(next, 500, "Gagal update data User")
       }
 
+      delete payload.password
+      delete payload.user_id
       res.status(200).send({
         message: "Success update data User",
         data: payload,
@@ -137,15 +145,14 @@ module.exports = (usecase) => {
 
   module.deleteUser = async (req, res, next) => {
     try {
-      const { id } = req.params
+      const { id, type } = req.params
 
-      const userById = await usecase.getUserById(id)
+      const userById = await usecase.getUserById(type, id)
       if (!userById) {
         return responseError(next, 400, "User tidak ditemukan")
       }
 
-      const user = await usecase.deleteUser(id)
-
+      const user = await usecase.deleteUser(id, userById.data.user_id, type)
       if (user == 0) {
         return responseError(next, 500, "Gagal delete data User")
       }

@@ -26,6 +26,31 @@ module.exports = (knex) => {
     return knexnest(knexSql)
   }
 
+  module.getCouponByAttribute = (attr, payload) => {
+    return knex("coupons").where(attr, payload).first()
+  }
+
+  module.getCouponUsedByAttribute = (attr, payload) => {
+    return knex(tableHeader).where(attr, payload).first()
+  }
+
+  module.checkDataCart = async (cart) => {
+    const carts = await knex("carts")
+      .whereIn("id", cart)
+      .count("id as jml")
+      .first()
+    return carts.jml
+  }
+
+  module.checkTotalPrice = async (total, cart) => {
+    const totalPrice = await knex("carts")
+      .sum("products.price as total_price")
+      .innerJoin("products", "products.id", "=", "carts.product_id")
+      .whereIn("carts.id", cart)
+      .first()
+    return totalPrice.total_price == total
+  }
+
   module.checkout = (payload) => {
     return knex.transaction(function (trx) {
       carts = payload.cart

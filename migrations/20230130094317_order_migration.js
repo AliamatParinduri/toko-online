@@ -10,7 +10,7 @@ exports.up = function (knex) {
     table.foreign("address_id").references("addresses.id")
     table.integer("customer_id").notNullable()
     table.foreign("customer_id").references("customers.id")
-    table.integer("coupon_id").notNullable()
+    table.integer("coupon_id")
     table.foreign("coupon_id").references("coupons.id")
     table
       .enum("status", ["ordered", "delivered", "canceled", "completed"])

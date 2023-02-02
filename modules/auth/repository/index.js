@@ -23,7 +23,6 @@ module.exports = (knex) => {
       default:
         throw new Error("Error")
     }
-
     return (sql = sql.where(attr, payload)).first()
   }
 

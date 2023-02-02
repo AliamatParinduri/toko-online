@@ -25,6 +25,41 @@ module.exports = (usecase) => {
     try {
       const data = req.body
       const type = req.user.type_id
+
+      const checkCoupon = await usecase.getCouponByAttribute(
+        "id",
+        data.coupon_id
+      )
+
+      if (!checkCoupon) {
+        return responseError(next, 400, "Coupon tidak ditemukan")
+      }
+
+      const checkDataCart = await usecase.checkDataCart(data.cart)
+      if (data.cart.length !== checkDataCart) {
+        return responseError(next, 400, "Data cart tidak valid")
+      }
+
+      const checkTotalPrice = await usecase.checkTotalPrice(
+        data.total,
+        data.cart
+      )
+
+      if (!checkTotalPrice) {
+        return responseError(next, 400, "Total price tidak valid")
+      }
+
+      if (data.coupon_id) {
+        const checkCouponUsed = await usecase.getCouponUsedByAttribute(
+          "coupon_id",
+          data.coupon_id
+        )
+
+        if (checkCouponUsed) {
+          return responseError(next, 400, "Coupon sudah digunakan")
+        }
+      }
+
       const payload = {
         customer_id: type,
         address_id: data.address_id,
@@ -43,7 +78,6 @@ module.exports = (usecase) => {
         data: payload,
       })
     } catch (error) {
-      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
