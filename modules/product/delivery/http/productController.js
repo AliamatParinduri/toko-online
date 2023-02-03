@@ -45,8 +45,12 @@ module.exports = (usecase) => {
     try {
       const data = req.body
 
-      if (data.price == 0 || data.price < 0) {
+      if (data.price < 1) {
         return responseError(next, 400, "Price tidak valid")
+      }
+
+      if (data.stock < 1) {
+        return responseError(next, 400, "stock tidak valid")
       }
 
       const checkProduct = await usecase.getProductByAttribute(

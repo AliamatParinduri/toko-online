@@ -62,7 +62,10 @@ module.exports = (knex) => {
   }
 
   module.getUserByAttribute = (attr, payload) => {
-    return knex(table).where(attr, payload).first()
+    return knex(table)
+      .where(attr, payload.param)
+      .innerJoin(payload.type, payload.type + ".user_id", "=", "users.id")
+      .first()
   }
 
   module.getUserByAttrWhereNot = (attr1, payload1, attr2, payload2, type) => {
@@ -74,7 +77,21 @@ module.exports = (knex) => {
   }
 
   module.createUser = (payload) => {
-    return knex(table).insert(payload)
+    return knex.transaction(function (trx) {
+      return trx
+        .insert({
+          email: payload.email,
+          password: payload.password,
+        })
+        .into(table)
+        .then((ids) => {
+          return trx(payload.type).insert({
+            phone: payload.phone,
+            name: payload.name,
+            user_id: ids[0],
+          })
+        })
+    })
   }
 
   module.updateUser = (id, payload) => {

@@ -15,8 +15,20 @@ module.exports = (repository) => {
     return repository.checkDataCart(cart)
   }
 
-  module.checkTotalPrice = (total, cart) => {
-    return repository.checkTotalPrice(total, cart)
+  module.checkTotalPrice = (payload) => {
+    return repository.checkTotalPrice(payload)
+  }
+
+  module.checkStockProduct = (cart) => {
+    return repository.checkStockProduct(cart)
+  }
+
+  module.updateStockProduct = (payload) => {
+    return repository.updateStockProduct(payload)
+  }
+
+  module.deleteCart = (cart) => {
+    return repository.deleteCart(cart)
   }
 
   module.checkout = (payload) => {

@@ -27,7 +27,21 @@ module.exports = (knex) => {
   }
 
   module.createUser = (payload) => {
-    return knex(table).insert(payload)
+    return knex.transaction(function (trx) {
+      return trx
+        .insert({
+          email: payload.email,
+          password: payload.password,
+        })
+        .into(table)
+        .then((ids) => {
+          return trx(payload.type).insert({
+            phone: payload.phone,
+            name: payload.name,
+            user_id: ids[0],
+          })
+        })
+    })
   }
 
   return module

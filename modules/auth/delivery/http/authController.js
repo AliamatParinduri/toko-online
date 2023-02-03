@@ -10,14 +10,18 @@ module.exports = (usecase) => {
     try {
       const data = req.body
 
-      const checkEmail = await usecase.getUserByAttribute("email", data.email)
-
+      const checkEmail = await usecase.getUserByAttribute("email", {
+        param: data.email,
+        type: data.type,
+      })
       if (checkEmail) {
         return responseError(next, 400, "Email sudah digunakan")
       }
 
-      const checkPhone = await usecase.getUserByAttribute("phone", data.phone)
-
+      const checkPhone = await usecase.getUserByAttribute("phone", {
+        param: data.phone,
+        type: data.type,
+      })
       if (checkPhone) {
         return responseError(next, 400, "No Handphone sudah digunakan")
       }
@@ -28,6 +32,7 @@ module.exports = (usecase) => {
         email: data.email,
         password: hash,
         phone: data.phone,
+        type: data.type,
       }
       const User = await usecase.createUser(payload)
 

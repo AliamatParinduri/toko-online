@@ -10,7 +10,7 @@ module.exports = (usecase) => {
       }
 
       const addresses = await usecase.getAddresses(userId, payload)
-      if (!addresses) {
+      if (addresses.data.length < 1) {
         return responseError(next, 404, "address tidak ditemukan")
       }
 
@@ -152,7 +152,7 @@ module.exports = (usecase) => {
         return responseError(next, 400, "address tidak ditemukan")
       }
 
-      const address = await usecase.deletedAdressByAttr("user_id", userId)
+      const address = await usecase.deletedAdressByAttr("customer_id", userId)
       if (address == 0) {
         return responseError(next, 500, "Gagal delete data address")
       }

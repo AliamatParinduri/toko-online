@@ -68,7 +68,7 @@ module.exports = (usecase) => {
 
       const checkCoupon = await usecase.getCouponByAttribute("code", data.code)
       if (checkCoupon) {
-        return responseError(next, 400, "Coupon sudah digunakan")
+        return responseError(next, 400, "Code coupon sudah pernah dibuat")
       }
 
       const payload = {

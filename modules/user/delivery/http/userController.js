@@ -36,10 +36,10 @@ module.exports = (usecase) => {
         return responseError(next, 404, "User tidak ditemukan")
       }
 
-      delete data.user_id
+      delete user.data.user_id
       res.status(200).send({
         message: "Success mendapatkan data user",
-        data: user,
+        ...user,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")
@@ -50,14 +50,18 @@ module.exports = (usecase) => {
     try {
       const data = req.body
 
-      const checkEmail = await usecase.getUserByAttribute("email", data.email)
-
+      const checkEmail = await usecase.getUserByAttribute("email", {
+        param: data.email,
+        type: data.type,
+      })
       if (checkEmail) {
         return responseError(next, 400, "Email sudah digunakan")
       }
 
-      const checkPhone = await usecase.getUserByAttribute("phone", data.phone)
-
+      const checkPhone = await usecase.getUserByAttribute("phone", {
+        param: data.phone,
+        type: data.type,
+      })
       if (checkPhone) {
         return responseError(next, 400, "No Handphone sudah digunakan")
       }
@@ -68,6 +72,7 @@ module.exports = (usecase) => {
         email: data.email,
         password: hash,
         phone: data.phone,
+        type: data.type,
       }
       const User = await usecase.createUser(payload)
 

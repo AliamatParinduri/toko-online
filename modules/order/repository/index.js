@@ -1,8 +1,12 @@
-const tableHeader = "orders"
+const table = "orders"
 const tableDetail = "orders_detail"
 
 module.exports = (knex) => {
   module.getAllOrdersByCustomer = (customerId, { perPage, currentPage }) => {
+    // knex(table).then((data) => {
+    //   knex(tableDetail)
+    //     .where("order_id", data[2].id)
+    // })
     return knex
       .select(
         "orders.id as id",
@@ -16,7 +20,7 @@ module.exports = (knex) => {
         "coupons.fixedDiscount as coupon_fixedDiscount"
       )
       .where("orders.customer_id", customerId)
-      .table(tableHeader)
+      .table(table)
       .innerJoin(tableDetail, "orders_detail.order_id", "=", "orders.id")
       .innerJoin("addresses", "addresses.id", "=", "orders.address_id")
       .innerJoin("coupons", "coupons.id", "=", "orders.coupon_id")
@@ -39,7 +43,6 @@ module.exports = (knex) => {
             },
           }
         })
-
         return {
           data,
           pagination: {
@@ -59,7 +62,7 @@ module.exports = (knex) => {
   }
 
   module.getCouponUsedByAttribute = (attr, payload) => {
-    return knex(tableHeader).where(attr, payload).first()
+    return knex(table).where(attr, payload).first()
   }
 
   module.checkDataCart = async (cart) => {
@@ -70,13 +73,59 @@ module.exports = (knex) => {
     return carts.jml
   }
 
-  module.checkTotalPrice = async (total, cart) => {
+  module.checkTotalPrice = async (payload) => {
+    let totalDiskon = 0
     const totalPrice = await knex("carts")
-      .sum("products.price as total_price")
       .innerJoin("products", "products.id", "=", "carts.product_id")
-      .whereIn("carts.id", cart)
-      .first()
-    return totalPrice.total_price == total
+      .whereIn("carts.id", payload.cart)
+      .then((datas) => {
+        let total = 0
+        datas.map((data) => {
+          total += data.qty * data.price
+        })
+        return total
+      })
+
+    if (payload.coupon_id) {
+      coupon = await knex("coupons").where("id", payload.coupon_id).first()
+      totalDiskon =
+        coupon.percentage > 0
+          ? (totalPrice * coupon.percentage) / 100
+          : coupon.fixedDiscount
+    }
+    return totalPrice - totalDiskon == payload.total
+  }
+
+  module.checkStockProduct = async (cart) => {
+    const data = await knex("carts").whereIn("id", cart)
+    for (const dt of data) {
+      const product = await knex("products")
+        .select("stock")
+        .where("id", dt.product_id)
+        .first()
+      if (product.stock < dt.qty) {
+        return []
+      }
+    }
+    return data
+  }
+
+  module.updateStockProduct = async (payload) => {
+    for (const data of payload) {
+      const product = await knex("products")
+        .where("id", data.product_id)
+        .first()
+
+      await knex("products")
+        .where("id", data.product_id)
+        .update({ stock: product.stock - data.qty })
+    }
+  }
+
+  module.deleteCart = async (cart) => {
+    return cart.map(async (data) => {
+      return knex("carts").where("id", data).del()
+    })
   }
 
   module.checkout = (payload) => {
@@ -90,7 +139,7 @@ module.exports = (knex) => {
           customer_id: payload.customer_id,
           coupon_id: payload.coupon_id,
         })
-        .into(tableHeader)
+        .into(table)
         .then((ids) => {
           const newCart = carts.map((cart) => {
             return {

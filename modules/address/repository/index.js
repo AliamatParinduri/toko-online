@@ -82,18 +82,32 @@ module.exports = (knex) => {
   }
 
   module.deleteAddressById = (id) => {
-    return knex(table).where("id", id).del()
+    return knex("customers_addresses")
+      .where("address_id", id)
+      .del()
+      .then(() => {
+        return knex(table).where("id", id).del()
+      })
   }
 
-  module.deletedAdressByAttr = (attr, id) => {
+  module.deletedAdressByAttr = async (attr, id) => {
+    let sql = await knex("customers_addresses").innerJoin(
+      table,
+      table + ".id",
+      "=",
+      "customers_addresses.address_id"
+    )
+
+    const address_id = sql.map((data) => {
+      return data.address_id
+    })
+
     return knex("customers_addresses")
-      .whereIn("customer_id", function () {
-        this.select("id").from("customers").where(attr, id)
-      })
-      .whereIn("address_id", function () {
-        this.select("id").from("addresses")
-      })
+      .where(attr, id)
       .del()
+      .then(() => {
+        return knex(table).whereIn("id", address_id).del()
+      })
   }
 
   return module

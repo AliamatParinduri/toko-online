@@ -11,10 +11,13 @@ module.exports = (usecase) => {
         perPage: req.query.perPage || 5,
         currentPage: req.query.currentPage || 1,
       }
-      const data = await usecase.getAllOrdersByCustomer(typeId, payload)
+      const orders = await usecase.getAllOrdersByCustomer(typeId, payload)
+      if (orders.data.length < 1) {
+        return responseError(next, 400, "order tidak ditemukan")
+      }
       res.status(200).send({
         message: "Success mendapatkan data order",
-        ...data,
+        ...orders,
       })
     } catch (error) {
       return responseError(next, 500, "Server error")
@@ -26,13 +29,15 @@ module.exports = (usecase) => {
       const data = req.body
       const type = req.user.type_id
 
-      const checkCoupon = await usecase.getCouponByAttribute(
-        "id",
-        data.coupon_id
-      )
+      if (data.coupon_id) {
+        const checkCoupon = await usecase.getCouponByAttribute(
+          "id",
+          data.coupon_id
+        )
 
-      if (!checkCoupon) {
-        return responseError(next, 400, "Coupon tidak ditemukan")
+        if (!checkCoupon) {
+          return responseError(next, 400, "Coupon tidak ditemukan")
+        }
       }
 
       const checkDataCart = await usecase.checkDataCart(data.cart)
@@ -40,13 +45,13 @@ module.exports = (usecase) => {
         return responseError(next, 400, "Data cart tidak valid")
       }
 
-      const checkTotalPrice = await usecase.checkTotalPrice(
-        data.total,
-        data.cart
-      )
-
+      const checkTotalPrice = await usecase.checkTotalPrice(data)
       if (!checkTotalPrice) {
-        return responseError(next, 400, "Total price tidak valid")
+        return responseError(
+          next,
+          400,
+          "Total price tidak valid, silahkan cek kembali total harga seluruhnya"
+        )
       }
 
       if (data.coupon_id) {
@@ -58,6 +63,26 @@ module.exports = (usecase) => {
         if (checkCouponUsed) {
           return responseError(next, 400, "Coupon sudah digunakan")
         }
+      }
+
+      const checkStockProduct = await usecase.checkStockProduct(data.cart)
+      if (checkStockProduct.length < 1) {
+        return responseError(
+          next,
+          400,
+          "Error, quantity lebih besar dari stock product"
+        )
+      }
+
+      const updateStockProduct = await usecase.updateStockProduct(
+        checkStockProduct
+      )
+      if (updateStockProduct == 0) {
+        return responseError(
+          next,
+          500,
+          "Gagal melakukan update data Stock Product"
+        )
       }
 
       const payload = {
@@ -73,11 +98,17 @@ module.exports = (usecase) => {
         return responseError(next, 500, "Gagal melakukan checkout")
       }
 
+      const deleteCart = await usecase.deleteCart(data.cart)
+      if (!deleteCart) {
+        return responseError(next, 500, "Gagal melakukan delete data pada cart")
+      }
+
       res.status(201).send({
         message: "Success melakukan checkout",
         data: payload,
       })
     } catch (error) {
+      console.log(error)
       return responseError(next, 500, "Server error")
     }
   }
